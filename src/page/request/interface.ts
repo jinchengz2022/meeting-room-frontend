@@ -98,7 +98,7 @@ export interface ReserveRoomRequest {
 }
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:3100/",
+  baseURL: "http://47.109.206.58/api",
   timeout: 3000,
 });
 
