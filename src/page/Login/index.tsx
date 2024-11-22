@@ -1,7 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { Form, message, Button, Input } from "antd";
 
-import { LoginUser, adminLogin, login } from "../request/interface";
+import { LoginUser, adminLogin, login } from "../../request/interface";
 
 const { Item } = Form;
 

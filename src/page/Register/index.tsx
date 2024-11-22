@@ -2,7 +2,11 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Form, message, Button, Input, Space } from "antd";
 
-import { RegisterUser, register } from "../request/interface";
+import {
+  RegisterUser,
+  getCaptchaCode,
+  register,
+} from "../../request/interface";
 
 const { Item } = Form;
 
@@ -14,12 +18,30 @@ export const Register = () => {
     try {
       const res = await register(values);
       if (res.status === 201) {
-        message.success("注册成功！", 1, () => navigation('/login'));
+        message.success("注册成功！", 1, () => navigation("/login"));
       } else {
         message.error(res.data.data);
       }
     } catch (error) {
       message.error(String(error));
+    }
+  };
+
+  const sendMail = async () => {
+    const email = form.getFieldValue("email");
+    try {
+      if (email) {
+        const res = await getCaptchaCode(email);
+        if (res.status !== 201 && res.status !== 200) {
+          message.error(res.data.data);
+        } else {
+          message.success('发送成功')
+        }
+      } else {
+        message.info('请填写您的邮箱')
+      }
+    } catch (error) {
+      console.error(String(error));
     }
   };
 
@@ -76,8 +98,8 @@ export const Register = () => {
           >
             <Input />
           </Item>
-          <Item label="验证码" required style={{ marginBottom: 0}}>
-            <Space align="center" >
+          <Item label="验证码" required style={{ marginBottom: 0 }}>
+            <Space align="center">
               <Item
                 name="captcha"
                 rules={[
@@ -87,9 +109,11 @@ export const Register = () => {
                   },
                 ]}
               >
-                <Input style={{ width: '100%' }} />
+                <Input style={{ width: "100%" }} />
               </Item>
-              <Button style={{ marginBottom: 24}} onClick={() => {}}>获取验证码</Button>
+              <Button style={{ marginBottom: 24 }} onClick={sendMail}>
+                获取验证码
+              </Button>
             </Space>
           </Item>
           <Item name="nickName" label="昵称">

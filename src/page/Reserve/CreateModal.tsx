@@ -7,7 +7,7 @@ import {
   ReserveRoomRequest,
   getMeetingRoom,
   reserveRoom,
-} from "../request/interface";
+} from "../../request/interface";
 import { jsonTranstion } from "../../utils/jsonTranstion";
 import { getUserList } from "../List/BookingList";
 

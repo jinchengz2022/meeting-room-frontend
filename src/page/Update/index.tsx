@@ -16,10 +16,12 @@ import { useNavigate } from "react-router-dom";
 
 import {
   UpdateUserInfoRequest,
+  getImgUrl,
   getUserInfo,
   updateUserInfo,
   upload,
-} from "../request/interface";
+} from "../../request/interface";
+import axios from "axios";
 
 const { Item } = Form;
 
@@ -29,7 +31,8 @@ export const UpdateModal: FC<{
   visible: boolean;
   id?: number;
   onCancel: () => void;
-}> = ({ visible, id, onCancel }) => {
+  refreshList: () => void;
+}> = ({ visible, id, onCancel, refreshList }) => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const [imageUrl, setImageUrl] = useState("");
@@ -53,20 +56,20 @@ export const UpdateModal: FC<{
   }, [id]);
 
   const onSubmit = async (values: Omit<UpdateUserInfoRequest, "id">) => {
-    console.log({ values });
-
     try {
       if (id) {
         const res = await updateUserInfo({
           ...values,
           id,
-          headPic: `http://localhost:3100/${values?.headPic?.file?.response?.data}`,
+          headPic: `http://localhost:9000/bucket1/${values?.headPic?.file?.name}`,
         });
         if (res.data.code === 201) {
           message.success("更新成功！", 1, () => {
             onCancel();
-            navigate("/list");
+            refreshList()
           });
+        } else {
+          message.error(res.data.data);
         }
       }
     } catch (error) {}
@@ -91,7 +94,7 @@ export const UpdateModal: FC<{
     }
     if (info.file.status === "done") {
       setLoading(false);
-      setImageUrl(`http://localhost:3100/${info.file.response.data}`);
+      setImageUrl(`http://localhost:9000/bucket1/${info.file.name}`);
     }
   };
 
@@ -133,8 +136,16 @@ export const UpdateModal: FC<{
             name="file"
             listType="picture-card"
             showUploadList={false}
-            action="http://localhost:3100/user/upload"
+            action={async (file: any) => {
+              const res = await getImgUrl(file.name);
+              return res.data.data;
+            }}
             beforeUpload={beforeUpload}
+            customRequest={async (values) => {
+              const { onSuccess, file, action } = values;
+              const res = await axios.put(action, file);
+              onSuccess!(res.data);
+            }}
             onChange={handleChange}
           >
             {imageUrl ? (
@@ -155,24 +166,6 @@ export const UpdateModal: FC<{
           ]}
         >
           <Input />
-        </Item>
-        <Item label="验证码" required style={{ marginBottom: 0 }}>
-          <Space align="center">
-            <Item
-              name="captcha"
-              rules={[
-                {
-                  required: true,
-                  message: "please input captcha",
-                },
-              ]}
-            >
-              <Input style={{ width: "100%" }} />
-            </Item>
-            <Button style={{ marginBottom: 24 }} onClick={() => {}}>
-              获取验证码
-            </Button>
-          </Space>
         </Item>
         <Item name="nickName" label="昵称">
           <Input />

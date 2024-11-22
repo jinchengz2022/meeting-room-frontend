@@ -8,10 +8,9 @@ import {
   ListResponse,
   deleteMeetingRoom,
   meetingRoomList,
-} from "../request/interface";
+} from "../../request/interface";
 import { CreateAndUpdateModal } from "./CreateAndUpdate";
 import { CreateModal } from "../Reserve/CreateModal";
-import { jsonTranstion } from "../../utils/jsonTranstion";
 
 export const MettingRoom = () => {
   const [form] = Form.useForm();
@@ -147,14 +146,16 @@ export const MettingRoom = () => {
             <Button type="primary" onClick={form.submit}>
               查询
             </Button>
-            <Button
-              style={{ marginLeft: 12 }}
-              onClick={() => {
-                setUpdateModalVisible(true);
-              }}
-            >
-              创建会议室
-            </Button>
+            {pathname.includes("user") ? null : (
+              <Button
+                style={{ marginLeft: 12 }}
+                onClick={() => {
+                  setUpdateModalVisible(true);
+                }}
+              >
+                创建会议室
+              </Button>
+            )}
           </div>
         </Form.Item>
       </Form>

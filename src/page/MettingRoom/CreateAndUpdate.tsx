@@ -7,7 +7,7 @@ import {
   createMeetingRoomInfo,
   getMeetingRoom,
   updateMeetingRoomInfo,
-} from "../request/interface";
+} from "../../request/interface";
 
 const { Item } = Form;
 

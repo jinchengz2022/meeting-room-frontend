@@ -1,8 +1,7 @@
 import * as React from "react";
 
-import { Button, Menu, Layout } from "antd";
+import { Button, Menu, Layout, Avatar, message } from "antd";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { UserOutlined } from "@ant-design/icons";
 
 import { jsonTranstion } from "../utils/jsonTranstion";
 
@@ -44,46 +43,54 @@ const layoutStyle = {
   width: "100%",
 };
 
+const adminMenu = [
+  {
+    key: "/admin/meeting-room",
+    label: "会议室管理",
+  },
+  {
+    key: "/admin/meeting-room/booking",
+    label: "预定管理",
+  },
+  {
+    key: "/admin/list",
+    label: "用户管理",
+  },
+];
+
+const userMenu = [
+  {
+    key: "/user/meeting-room",
+    label: "会议室列表",
+  },
+  {
+    key: "/user/history",
+    label: "预定历史",
+  },
+];
+
 export const Home = (value: any) => {
   const { pathname } = useLocation();
-  const { isAdmin, username } = jsonTranstion(localStorage.getItem("userInfo"));
+  const { isAdmin, username, headPic } = jsonTranstion(
+    localStorage.getItem("userInfo")
+  );
   const navigate = useNavigate();
-  const [selectKey, setSelectKey] = React.useState([pathname]);
-
-  const adminMenu = [
-    {
-      key: "/admin/meeting-room",
-      label: "会议室管理",
-    },
-    {
-      key: "/admin/meeting-room/booking",
-      label: "预定管理",
-    },
-    {
-      key: "/admin/list",
-      label: "用户管理",
-    },
-    {
-      key: "/admin/permission",
-      label: "权限管理",
-    },
-  ];
-
-  const userMenu = [
-    {
-      key: "/user/meeting-room",
-      label: "会议室列表",
-    },
-    {
-      key: "/user/history",
-      label: "预定历史",
-    },
-  ];
+  const [selectKey, setSelectKey] = React.useState<string[]>();
 
   React.useEffect(() => {
     if (!isAdmin && pathname.includes("admin")) {
       navigate(`/error`);
     }
+    if (!localStorage.getItem("userInfo")) {
+      message.info("未获取到当前用户信息，请重新登录", 1, () =>
+        navigate("/login")
+      );
+    }
+    if (pathname === '/') {
+      navigate(`${isAdmin ? adminMenu[0].key : userMenu[0].key}`);
+    }
+
+    setSelectKey([pathname])
   }, [pathname]);
 
   const selectMenu = (value: any) => {
@@ -111,9 +118,20 @@ export const Home = (value: any) => {
               alignItems: "center",
             }}
           >
-            <Button type="link" icon={<UserOutlined />}>
-              {username}
-            </Button>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "start",
+                alignItems: "center",
+              }}
+            >
+              <Avatar
+                src={headPic}
+                style={{ width: 30, marginRight: 12 }}
+                alt=""
+              />
+              <span>{username}</span>
+            </div>
             <Button type="link" onClick={() => navigate("/login")}>
               退出
             </Button>

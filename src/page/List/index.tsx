@@ -8,7 +8,7 @@ import {
   list,
   ListResponse,
   unFreezeUser,
-} from "../request/interface";
+} from "../../request/interface";
 import { UpdateModal } from "../Update";
 
 export const List = () => {
@@ -93,6 +93,7 @@ export const List = () => {
             </Button>
             <Button
               type="link"
+              style={{ color: col.isFrozen ? '#69b1ff': '#f00'}}
               onClick={async () => {
                 const res = col.isFrozen
                   ? await unFreezeUser({ id: col.id })
@@ -139,6 +140,7 @@ export const List = () => {
         visible={updateModalVisible}
         id={updateUserId}
         onCancel={() => setUpdateModalVisible(false)}
+        refreshList={() => getList(1, 3)}
       />
     </div>
   );

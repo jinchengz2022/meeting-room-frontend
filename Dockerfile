@@ -3,18 +3,20 @@ FROM node as build-stage
 
 WORKDIR /app
 
+COPY build ./
+
 COPY package.json ./
 
-RUN npm config set registry https://registry.npmmirror.com/
+# RUN npm config set registry https://registry.npmmirror.com/
 
-RUN npm install
+# RUN npm install
 
 COPY . .
 
-RUN npm run build
+# RUN npm run build
 
 # production stage
-FROM nginx:stable as production-stage
+FROM nginx as production-stage
 
 COPY --from=build-stage /app/build /usr/share/nginx/html
 

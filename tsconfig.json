@@ -18,7 +18,7 @@
     "baseUrl": "./",
     "paths": {
       "@/*": ["src/*"],
-      "@apis/*": ["src/page/request/*"]
+      "@apis/*": ["src/request/*"]
     },
   },
   "include": ["src"]

@@ -10,7 +10,7 @@ import {
   reserveApply,
   reserveReject,
   reserveUnbind,
-} from "../request/interface";
+} from "../../request/interface";
 import { useLocation } from "react-router-dom";
 import dayjs from "dayjs";
 import { jsonTranstion } from "../../utils/jsonTranstion";
@@ -145,7 +145,7 @@ export const BookingList = () => {
     {
       title: "操作",
       render: (_, col) => {
-        return isAdmin ? (
+        return isAdmin && col.status === 'applying' ? (
           <div>
             <Popconfirm
               title="确定通过预定吗？"
@@ -160,7 +160,7 @@ export const BookingList = () => {
               <Button type="link">驳回</Button>
             </Popconfirm>
           </div>
-        ) : col.status === "applying" ? (
+        ) : ["done", 'reject'].includes(col.status) ? (
           <Popconfirm
             title="确定解除预定吗？"
             onConfirm={() => updateRoomInfo(col.id, "unbind")}
